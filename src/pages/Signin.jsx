@@ -3,10 +3,17 @@ import MyContainer from "../components/MyContainer";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
 import { toast } from "react-toastify";
+import { GoogleAuthProvider } from "firebase/auth";
 
+
+const googleProvider = new GoogleAuthProvider();
 
 const Signin = () => {
   const [user, setUser] = useState(null);
@@ -33,21 +40,29 @@ const Signin = () => {
   };
   // ===========================================
   const handleGoogleSignin = () => {
-
+    signInWithPopup(auth, googleProvider)
+      .then((res) => {
+        console.log(res);
+        setUser(res.user);
+        toast.success("Sign in Successfull");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message);
+      });
   };
 
   // ===========================================
   const handleSingout = () => {
-
     signOut(auth)
-    .then(res=>{
+      .then((res) => {
         toast.success("Signout Successfull");
         setUser(null);
-        console.log(res)
-    })
-    .catch(error=>{
+        console.log(res);
+      })
+      .catch((error) => {
         toast.error(error.message);
-    })
+      });
   };
 
   console.log(user);
@@ -75,7 +90,6 @@ const Signin = () => {
 
           {/* Login card */}
           <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8">
-        
             {user ? (
               <div className="text-center space-y-3 ">
                 <img
@@ -85,7 +99,9 @@ const Signin = () => {
                 />
                 <h2 className="text-xl font-semibold">{user?.displayName}</h2>
                 <p className="text-white/80">{user?.email}</p>
-                <button onClick={handleSingout} className="my-btn">Sign Out</button>
+                <button onClick={handleSingout} className="my-btn">
+                  Sign Out
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSignin} className="space-y-5">
@@ -143,7 +159,7 @@ const Signin = () => {
                   type="button"
                   onClick={handleGoogleSignin}
                   className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
-                >
+               >
                   <img
                     src="https://www.svgrepo.com/show/475656/google-color.svg"
                     alt="google"
