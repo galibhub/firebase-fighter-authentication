@@ -3,11 +3,29 @@ import MyContainer from "../components/MyContainer";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebase.config";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignin = () => {};
+  const handleSignin = (e) => {
+   e.preventDefault();
+   const email = e.target.email?.value;
+   const password = e.target.password?.value;
+   console.log({ email, password });
+
+   signInWithEmailAndPassword(auth, email, password).then(res=>{
+    console.log(res);
+    toast.success("Sign in Successfull")
+
+   })
+   .catch(error=>{
+    console.log(error);
+    toast.error(error.message);
+   });
+  };
 
   const handleGoogleSignin = () => {};
 
@@ -44,9 +62,6 @@ const Signin = () => {
                 <input
                   type="email"
                   name="email"
-                  //   ref={emailRef}
-                  // value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@email.com"
                   className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
